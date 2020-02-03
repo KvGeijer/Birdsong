@@ -32,6 +32,22 @@ powDataShort = conv(data.^2,filtShort,'same');
 %Skapa tidsvektor f?r plots. I sekunder
 t = (0:(length(data)-1))/fs;
 
+%Plot to understand and debugg
+figure
+subplot(411)
+plot(t,data)
+hold on
+plot(t,sign,'*')
+title('Nersamplad Orginaldata')
+subplot(412)
+plot(t,powDataLong)
+title('Filtrerad med long MA filter')
+subplot(413)
+plot(t,powDataShort)
+title('Filtrerad med short MA filter')
+subplot(414)
+plot(t,powDataShort-powDataLong)
+title('Differens av filtrerade signaler')
 
 %Hitta punkter med signifikant ljud
 sign = zeros(length(data),1);
@@ -60,37 +76,27 @@ startInd = indSign(stopIndSs+1);
 
 %remove last startInd, ad first startInd
 startInd = circshift(startInd,1);
-startInd = circshift(startInd,1);
 startInd(1) = indSign(1);
 
-Xmat = startInd;
-Tmat = stopInd;
-% Xmat = zeros(100000,length(startInd));
-% for ii = 1:length(startInd)
-%     Xmat(:,ii) = data(startInd(ii):stopInd(ii));
-% end
+%Cut out the strophes in columns of the X-matrix
+Xmat = zeros(max(stopInd-startInd)+1,length(startInd));
+%Pu the corr time values inside the T-matrix
+Tmat = zeros(max(stopInd-startInd)+1,length(startInd));
+for ii = 1:length(startInd)
+    Xmat(1:(stopInd(ii)-startInd(ii)+1),ii) = data(startInd(ii):stopInd(ii));
+    Tmat(1:(stopInd(ii)-startInd(ii)+1),ii) = t(startInd(ii):stopInd(ii));
+end
 
-
-%Plotta f?r f?rst?else
+%Plot to see teh final strophes
+%Remember to trim all the zeros
 figure
-subplot(411)
-plot(t,data)
-hold on
-plot(t,sign,'*')
-title('Nersamplad Orginaldata')
-subplot(412)
-plot(t,powDataLong)
-title('Filtrerad med long MA filter')
-subplot(413)
-plot(t,powDataShort)
-title('Filtrerad med short MA filter')
-subplot(414)
-plot(t,powDataShort-powDataLong)
-title('Differens av filtrerade signaler')
-
-
-
-
+hold on;
+title('Different cut out strophes')
+for ii = 1:length(startInd)
+   plot(Tmat(1:(stopInd(ii)-startInd(ii)),ii),Xmat(1:(stopInd(ii)-startInd(ii)),ii)); 
+end
+%Plot this if you want to see that the result matches the original
+%plot(t,data,'k:','LineWidth',0.02)
 
 end
 

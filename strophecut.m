@@ -1,4 +1,4 @@
-function [Xmat, Tmat, fs] = egenSyllCut(data, fs)
+function [Xmat, Tmat, fs] = strophecut(data, fs)
 %Tgis is a function which takes one song as input (vector) and returns a
 %matrix where coolumns represent small parts of the song (the syllables) as
 %well as a separate matrix for the time points (maybe?) as well as fs.

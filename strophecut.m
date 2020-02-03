@@ -32,6 +32,18 @@ powDataShort = conv(data.^2,filtShort,'same');
 %Skapa tidsvektor f?r plots. I sekunder
 t = (0:(length(data)-1))/fs;
 
+
+%Hitta punkter med signifikant ljud
+sign = zeros(length(data),1);
+tol = 0.1;
+tolErr = tol*max(powDataLong);
+
+for ii = 1:length(data)
+   if powDataShort(ii)>powDataLong(ii) + tolErr
+       sign(ii) = 1;
+   end
+end
+
 %Plot to understand and debugg
 figure
 subplot(411)
@@ -49,16 +61,6 @@ subplot(414)
 plot(t,powDataShort-powDataLong)
 title('Differens av filtrerade signaler')
 
-%Hitta punkter med signifikant ljud
-sign = zeros(length(data),1);
-tol = 0.1;
-tolErr = tol*max(powDataLong);
-
-for ii = 1:length(data)
-   if powDataShort(ii)>powDataLong(ii) + tolErr
-       sign(ii) = 1;
-   end
-end
 %Spara index d?r s?ng finns.
 indSign = find(sign==1); %L?gg till i b?rjan och slut?
 indSign = [indSign;length(data)];

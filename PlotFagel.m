@@ -3,19 +3,20 @@ D = 'C:\Users\karek\OneDrive\Documents\MATLAB\MatMod2020\Data'; %Adress to folde
 S = dir(fullfile(D,'*'));
 N = setdiff({S([S.isdir]).name},{'.','..'}); % list of subfolders of D.
 
-
-lengthTable = zeros(6,10);
-
 for ii = 1:numel(N) %For each subfolder
-    figure
+%for ii = 4:4 %For specific folders
+    %figure
     T = dir(fullfile(D,N{ii},'*')); % improve by specifying the file extension.
     C = {T(~[T.isdir]).name}; % files in subfolder.
     for jj = 1:numel(C)
+    %for jj = 5:5
         F = fullfile(D,N{ii},C{jj});
         [data, ~] = audioread(F);
-        subplot(4,3,jj);
-        plot((1:length(data))/44100,data);
-        
-        lengthTable(ii,jj) = length(data);
+        %data = data(:,1);
+        %subplot(4,3,jj);
+        %plot((1:length(data))/44100,data);
+        strophecut(data);
+       
     end
 end
+

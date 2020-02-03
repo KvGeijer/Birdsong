@@ -11,10 +11,10 @@ for ii = 1:numel(N) %For each subfolder
     T = dir(fullfile(D,N{ii},'*')); % improve by specifying the file extension.
     C = {T(~[T.isdir]).name}; % files in subfolder.
     for jj = 1:numel(C)
-        F = fullfile(D,N{ii},C{jj})
+        F = fullfile(D,N{ii},C{jj});
         [data, ~] = audioread(F);
         subplot(4,3,jj);
-        plot(data);
+        plot((1:length(data))/44100,data);
         
         lengthTable(ii,jj) = length(data);
     end

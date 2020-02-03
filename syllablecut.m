@@ -6,8 +6,8 @@ function [Xmat,Tmat,fs]=syllablecut(data0,fs,minsp,maxsp,extth,lev,Filtl,Filts)
 % maxsp: is maxmum space between syllables (ms)
 % extth: (ms) ?
 % lev: Level of difference tolerated (in %)
-% Fltl: ? Some filter
-% Filts: ? Some filter
+% Fltl: ? Filter long, amount of samples in length
+% Filts: ? Filter short, amount of samples in length
 
 
 %S?tter samplingsfreq om inget ges
@@ -38,6 +38,8 @@ aets=maxsp*fs/1000; % maxsp ms is maximum allowed syllable length.
 
 %Nani? Filtrerar datan f?r att se var s?ng faktiskt ?r. Filts & Filtl kan
 %s?ttas = 5 med 'ok' resultat. Men vet inte vad de b?r vara, ger varningar.
+
+%Filter long och filter short!
 xpows=conv(ones(Filts,1)/Filts,data.^2);
 xpows=xpows(Filts/2+1:length(data)+Filts/2);
 xpowl=conv(ones(Filtl,1)/Filtl,data.^2);

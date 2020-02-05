@@ -29,9 +29,9 @@ fs=fs/4;
 %Skapar ett l?ngt och ett kort MA filter f?r att hitta syllables~
 %Hur l?nga ska filtrerna vara i ms?
 if nargin <2 
-    filtLongLen = filtLen;
-else 
     filtLongLen = 360;
+else 
+    filtLongLen = filtLen;
 end
 filtShortLen = filtLongLen/4;
 filtLongLen = round(filtLongLen/1000*fs);

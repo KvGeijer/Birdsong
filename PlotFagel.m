@@ -9,8 +9,8 @@ for ii = 1:numel(N) %For each subfolder
     %figure
     T = dir(fullfile(D,N{ii},'*')); % improve by specifying the file extension.
     C = {T(~[T.isdir]).name}; % files in subfolder.
-    for jj = 1:numel(C)
-    %for jj = 3:4
+    %for jj = 1:numel(C)
+    for jj = 3:4
         F = fullfile(D,N{ii},C{jj});
         [data, ~] = audioread(F);
         %data = data(:,1);

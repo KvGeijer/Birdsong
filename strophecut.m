@@ -1,9 +1,12 @@
-function [Xmat, Tmat, fs] = strophecut(data0, fs)
+function [Xmat, Tmat, fs] = strophecut(data0, fs, filtLen)
 %Tgis is a function which takes one song as input (vector) and returns a
 %matrix where coolumns represent small parts of the song (the syllables) as
 %well as a separate matrix for the time points (maybe?) as well as fs.
 % Note that this does not actually pick out syllables but actually song
 % strophes.
+
+%Input: Data: audio. fs: sampling freq. filtLen = length in ms of long
+%filter.
 
 %Convert to mono sound
 data = data0(:,1);
@@ -25,11 +28,17 @@ fs=fs/4;
 
 %Skapar ett l?ngt och ett kort MA filter f?r att hitta syllables~
 %Hur l?nga ska filtrerna vara i ms?
-filtLongMs = 360;
-filtShortMs = filtLongMs/4;
+if nargin <2 
+    filtLongLen = filtLen;
+else 
+    filtLongLen = 360;
+end
+filtShortLen = filtLongLen/4;
+filtLongLen = round(filtLongLen/1000*fs);
+filtShortLen = round(filtShortLen/1000*fs);
 %Skapa filtrerna
-filtLong = ones(filtLongMs,1)/filtLongMs;
-filtShort = ones(filtShortMs,1)/filtShortMs;
+filtLong = ones(filtLongLen,1)/filtLongLen;
+filtShort = ones(filtShortLen,1)/filtShortLen;
 % Filtrera kvadraten av datan med filtrerna
 powDataLong = conv(data.^2,filtLong,'same');
 powDataShort = conv(data.^2,filtShort,'same');
@@ -56,21 +65,18 @@ indSign = [indSign;length(data)];
 diffIndSign = diff(indSign);
 
 %Plot to understand and debugg
-figure
-subplot(411)
-plot(t,data)
-
-hold on
-plot(indSign/fs,data(indSign),'.','LineWidth',0.01)
-title('Nersamplad Orginaldata')
-subplot(412)
-plot(t,powDataLong)
-title('Filtrerad med long/Short MA filter')
-hold on
-plot(t,powDataShort)
-subplot(413)
-plot(t,powDataShort-powDataLong)
-title('Differens av filtrerade signaler')
+figure;
+subplot(411);
+plot(t,data);
+title('Nersamplad Orginaldata');
+subplot(412);
+plot(t,data);
+hold on;
+plot(indSign/fs,data(indSign),'.','LineWidth',0.005);
+title('Filtrerad med long/Short MA filter');
+subplot(413);
+plot(t,powDataShort-powDataLong);
+title('Differens av filtrerade signaler');
 
 
 %find all distances above a certain threshold. Corresponds to large spaces
@@ -102,8 +108,8 @@ end
 
 %Plot to see teh final strophes
 %Remember to trim all the zeros
-subplot(414)
-title('Different cut out strophes')
+subplot(414);
+title('Different cut out strophes');
 hold on
 for ii = 1:length(startInd)
    plot(Tmat(1:(stopInd(ii)-startInd(ii)),ii),Xmat(1:(stopInd(ii)-startInd(ii)),ii)); 

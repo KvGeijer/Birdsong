@@ -1,20 +1,18 @@
-function [Xmat, Tmat, fs] = strophecut(data0, fs, filtLen, tol)
+function [Xmat, Tmat, fs] = strophecut(data0, fs, filtLongLen, tol)
 %Tgis is a function which takes one song as input (vector) and returns a
 %matrix where coolumns represent small parts of the song (the syllables) as
 %well as a separate matrix for the time points (maybe?) as well as fs.
-% Note that this does not actually pick out syllables but actually song
-% strophes.
 
 %Input: Data: audio. fs: sampling freq. filtLen = length in ms of long
 %filter. Tol is tolerance [0,1] where higher tol takes up more sound.
+
+%Either send in all arguments or just data and fs.
 
 %Convert to mono sound
 data = data0(:,1);
 
 %S?tter standard fs om inget anges
-if nargin<2 
-    fs = 44100;
-end
+
 
 %Tar bort all tysthet i slutet och b?rjan
 maxt = find(data~=0,1,'last');
@@ -28,11 +26,7 @@ fs=fs/4;
 
 %Skapar ett l?ngt och ett kort MA filter f?r att hitta syllables~
 %Hur l?nga ska filtrerna vara i ms?
-if nargin <2 
-    filtLongLen = 360;
-else 
-    filtLongLen = filtLen;
-end
+if nargin <3 filtLongLen = 360; end
 filtShortLen = filtLongLen/4;
 filtLongLen = round(filtLongLen/1000*fs);
 filtShortLen = round(filtShortLen/1000*fs);
@@ -49,7 +43,7 @@ t = (0:(length(data)-1))/fs;
 %Hitta punkter med signifikant ljud
 sign = zeros(length(data),1);
 %Tol kan justeras i inputs 
-if nargin <2; tol = 0.95; end
+if nargin <3; tol = 0.95; end
 tolErr = (1-tol)*max(powDataLong);
 
 for ii = 1:length(data)

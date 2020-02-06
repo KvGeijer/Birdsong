@@ -1,4 +1,4 @@
-function [Xmat, Tmat, fs] = strophecut(data0, fs, filtLen)
+function [Xmat, Tmat, fs] = strophecut(data0, fs, filtLen, tol)
 %Tgis is a function which takes one song as input (vector) and returns a
 %matrix where coolumns represent small parts of the song (the syllables) as
 %well as a separate matrix for the time points (maybe?) as well as fs.
@@ -6,7 +6,7 @@ function [Xmat, Tmat, fs] = strophecut(data0, fs, filtLen)
 % strophes.
 
 %Input: Data: audio. fs: sampling freq. filtLen = length in ms of long
-%filter.
+%filter. Tol is tolerance [0,1] where higher tol takes up more sound.
 
 %Convert to mono sound
 data = data0(:,1);
@@ -48,8 +48,9 @@ t = (0:(length(data)-1))/fs;
 
 %Hitta punkter med signifikant ljud
 sign = zeros(length(data),1);
-tol = 0.1;
-tolErr = tol*max(powDataShort-powDataLong);
+%Tol kan justeras i inputs 
+if nargin <2; tol = 0.95; end
+tolErr = (1-tol)*max(powDataLong);
 
 for ii = 1:length(data)
    if powDataShort(ii)>powDataLong(ii) + tolErr
@@ -73,7 +74,7 @@ subplot(412);
 plot(t,data);
 hold on;
 plot(indSign/fs,data(indSign),'.','LineWidth',0.005);
-title('Filtrerad med long/Short MA filter');
+title('Signifikant orginaldata');
 subplot(413);
 plot(t,powDataShort-powDataLong);
 title('Differens av filtrerade signaler');
@@ -82,7 +83,10 @@ title('Differens av filtrerade signaler');
 %find all distances above a certain threshold. Corresponds to large spaces
 %of no song = silence between separate strophes.
 %Allowed lengths between.
-minSpace = 0.25*fs;
+minSpace = 0.06*fs;
+
+
+
 %Find the indexes of where the stops start
 stopIndSs = find(diffIndSign>minSpace);
 stopInd = indSign(stopIndSs);
@@ -96,6 +100,15 @@ startInd(1) = indSign(1);
 if isempty(stopInd) 
     stopInd = indSign(end);
 end
+
+%Now we want to include sampes a bit to the left and right of the
+%significant sounds. Default 0.5*minSpace to each side. (spaceExtension)
+spaceExt = round(0.6*minSpace);
+stopInd = stopInd+spaceExt;
+if stopInd(end)>length(data); stopInd(end) = length(data); end
+startInd = startInd-spaceExt;
+if startInd(1)<1; startInd(1) = 1; end
+
 
 %Cut out the strophes in columns of the X-matrix
 Xmat = zeros(max(stopInd-startInd)+1,length(startInd));

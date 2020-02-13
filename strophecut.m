@@ -1,6 +1,9 @@
 function [Xmat, Tmat, fs] = strophecut(data0, fs, filtLongLen, tol)
 %This function cuts out syllables (or strophes if you change settings).
 
+%Do you want to plot shit?
+figOn = 0;
+
 %Output: Xmat is a matrix where the columns are the syllables extracted
 %from the input. Tmat is a matrix where the columns store the associated
 %time values to all values in Xmat. fs is the sampling frequency.
@@ -14,9 +17,6 @@ function [Xmat, Tmat, fs] = strophecut(data0, fs, filtLongLen, tol)
 
 %Either send in all arguments or just data and fs.
 
-%Do you want to plot shit?
-figOn = 0;
-
 %Convert to mono sound
 data = data0(:,1);
 
@@ -26,13 +26,14 @@ maxt = find(data~=0,1,'last');
 mint = find(data~=0,1,'first');
 data=data(mint:maxt);
 
-%Downsamplar med en faktor 4, beh?ver vi detta med s? lite indata?
-data=decimate(data,4);
-fs=fs/4;
+%Downsamplar med en faktor 4. Removed since gave worse results.
+%data=decimate(data,4);
+%fs=fs/4;
 
 
 %Creates a long and short MA filter to find significant sounds.
-if nargin <3 filtLongLen = 360; end
+if nargin <3; filtLongLen = 360; end
+
 filtShortLen = filtLongLen/4;
 filtLongLen = round(filtLongLen/1000*fs);
 filtShortLen = round(filtShortLen/1000*fs);

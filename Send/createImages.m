@@ -1,8 +1,11 @@
 names = ["bergfink", "blames", "bofink", "grasparv", "pilfink", "talgoxe"];
+DataPath = '..\Data';
 
 for f = 1:size(names, 2)
     for i = 1:6
-        y = audioread("sounds/" + names(f) + "/" + i + ".mp3");
+        T = dir(fullfile(DataPath,names(f),'*'));
+        C = {T(~[T.isdir]).name};
+        y = audioread(fullfile(DataPath,names(f),C{i}));
         y = y(:, 1);
         
         

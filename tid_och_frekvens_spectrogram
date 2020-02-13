@@ -1,0 +1,25 @@
+close all
+[y, fs] = audioread('FCOE12h39m28s06apr2010.mp3');
+[Xmat, Tmat, nyfs] = strophecut(y, fs);
+
+for a = 1:size(Xmat,2)
+Xmat1 = Xmat(:,a);
+k = find(Xmat1 ~= 0, 1, 'last');
+Xmat1 = Xmat1(1:k);
+
+%bra frekvensupplösning
+figure(1)
+subplot(6,floor(size(Xmat,2)/6)+1, a)
+spectrogram(Xmat1, floor(k), floor(0.9*floor(k)), [], nyfs, 'yaxis');
+colorbar('off')
+
+%bra tidsupplösning
+figure(2)
+subplot(6,floor(size(Xmat,2)/6)+1, a)
+spectrogram(Xmat1, floor(k/30), floor(0.9*floor(k/30)), [], nyfs, 'yaxis');
+colorbar('off')
+
+end
+
+% figure
+% pmtm(Xmat1,8,length(Xmat1),nyfs)

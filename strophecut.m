@@ -14,6 +14,9 @@ function [Xmat, Tmat, fs] = strophecut(data0, fs, filtLongLen, tol)
 
 %Either send in all arguments or just data and fs.
 
+%Do you want to plot shit?
+figOn = 0;
+
 %Convert to mono sound
 data = data0(:,1);
 
@@ -66,19 +69,20 @@ indSign = [indSign;length(data)];
 diffIndSign = diff(indSign);
 
 %Plot to understand and debugg
-figure;
-subplot(411);
-plot(t,data);
-title('Nersamplad Orginaldata');
-subplot(412);
-plot(t,data);
-hold on;
-plot(indSign/fs,data(indSign),'.','LineWidth',0.005);
-title('Signifikant orginaldata');
-subplot(413);
-plot(t,powDataShort-powDataLong);
-title('Differens av filtrerade signaler');
-
+if figOn==1
+    figure;
+    subplot(411);
+    plot(t,data);
+    title('Nersamplad Orginaldata');
+    subplot(412);
+    plot(t,data);
+    hold on;
+    plot(indSign/fs,data(indSign),'.','LineWidth',0.005);
+    title('Signifikant orginaldata');
+    subplot(413);
+    plot(t,powDataShort-powDataLong);
+    title('Differens av filtrerade signaler');
+end
 
 %find all distances above a certain threshold. Corresponds to large spaces
 %of no song = silence between separate syllables/strophes.
@@ -125,14 +129,15 @@ end
 
 %Plot to see teh final strophes
 %Remember to trim all the zeros
-subplot(414);
-title('Different cut out strophes');
-hold on
-for ii = 1:length(startInd)
-   plot(Tmat(1:(stopInd(ii)-startInd(ii)),ii),Xmat(1:(stopInd(ii)-startInd(ii)),ii)); 
+if figOn==1
+    subplot(414);
+    title('Different cut out strophes');
+    hold on
+    for ii = 1:length(startInd)
+       plot(Tmat(1:(stopInd(ii)-startInd(ii)),ii),Xmat(1:(stopInd(ii)-startInd(ii)),ii)); 
+    end
 end
-%Plot this if you want to see that the result matches the original
-%plot(t,data,'k:','LineWidth',0.02)
+
 
 end
 

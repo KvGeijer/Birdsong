@@ -1,3 +1,5 @@
+%For this to work you need to create the folder Oskar with the birds as
+%subfolders.
 name = ".\Oskar";
 faglar = ["bergfink","blames","bofink","grasparv","pilfink","talgoxe"];
 dataPath = '..\Data';

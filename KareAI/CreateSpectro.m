@@ -1,6 +1,6 @@
 %For this to work you need to create the folder Oskar with the birds as
 %subfolders.
-name = ".\Oskar";
+name = ".\Oskar2";
 faglar = ["bergfink","blames","bofink","grasparv","pilfink","talgoxe"];
 dataPath = '..\Data';
 addpath('..');
@@ -15,6 +15,8 @@ for type = 1:6
     
     %for n = 1:1
     for n = 1:numel(C)
+        %Create one folder for each bird
+        mkdir(fullfile(name,faglar(type),num2str(n)));
         %read file and get syllables
         F = fullfile(dataPath,faglar(type),C{n});
         [data,fs] = audioread(F);
@@ -37,7 +39,7 @@ for type = 1:6
             maxVal = max(max(img));
             minVal = min(min(img));
             img = (img-minVal)/(maxVal-minVal);
-            imwrite(img,fullfile(name,faglar(type),n + "_" + syll + ".png"),'PNG');
+            imwrite(img,fullfile(name,faglar(type),num2str(n),syll + ".png"),'PNG');
         end
         
     end

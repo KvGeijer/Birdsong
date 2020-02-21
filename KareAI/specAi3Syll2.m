@@ -1,20 +1,25 @@
-%L?ser in inputs.
-folder = 'Oskar';
-imds = imageDatastore(folder, 'IncludeSubfolders',true,'LabelSource','foldernames');
 %%
-labelCount = countEachLabel(imds);
-imgSize = size(readimage(imds,1));
-%%
-numFiles = 56;
-[imdsUse,imdsExtra] = splitEachLabel(imds,numTrainFiles,'randomize');
+folders = {'.\Oskar2\bofink';'.\Oskar2\grasparv';'.\Oskar2\talgoxe'};
+[imdsTrainA, imdsValA] = imdata(folders(1),"bofink");
+[imdsTrainB, imdsValB] = imdata(folders(2),"grasparv");
+[imdsTrainC, imdsValC] = imdata(folders(3),"talgoxe");
 
+imdsTrain = imageDatastore([imdsTrainA.Files;imdsTrainB.Files;imdsTrainC.Files]);
+imdsTrain.Labels = [imdsTrainA.Labels;imdsTrainB.Labels;imdsTrainC.Labels];
+
+imdsValidation = imageDatastore([imdsValA.Files;imdsValB.Files;imdsValC.Files]);
+imdsValidation.Labels = [imdsValA.Labels;imdsValB.Labels;imdsValC.Labels];
 %%
-numTrain = 44;
-[imdsTrain,imdsValidation] = splitEachLabel(imds,numTrainFiles,'randomize');
+labelCountTrain = countEachLabel(imdsTrain);
+labelCountValidation = countEachLabel(imdsValidation);
+
+imgSizeTrain = size(readimage(imdsTrain,1));
+imgSizeValidation = size(readimage(imdsValidation,1));
+
 
 %%
 layers = [
-    imageInputLayer([imgSize(1) imgSize(2) 1])
+    imageInputLayer([imgSizeTrain(1) imgSizeTrain(2) 1])
     
     convolution2dLayer(3,8,'Padding','same')
     batchNormalizationLayer
@@ -32,9 +37,11 @@ layers = [
     batchNormalizationLayer
     reluLayer
     
-    fullyConnectedLayer(size(labelCount, 1))
+    fullyConnectedLayer(size(labelCountTrain, 1))
     softmaxLayer
     classificationLayer];
+
+
 %%
 options = trainingOptions('sgdm', ...
     'InitialLearnRate',0.01, ...
@@ -48,6 +55,8 @@ options = trainingOptions('sgdm', ...
 
 %%
 net = trainNetwork(imdsTrain,layers,options);
+
+%% INFOGA DIN METOD F?R GENOMSNITT H?R OSKAR
 
 %%
 YPred = classify(net,imdsValidation);

@@ -4,12 +4,6 @@ imds = imageDatastore(folders,'LabelSource','foldernames');
 %%
 labelCount = countEachLabel(imds);
 imgSize = size(readimage(imds,1));
-%% Sep
-
-% for ii = 1:6
-%     
-% end
-
 %%
 numFiles = 207;
 [imdsUse,imdsExtra] = splitEachLabel(imds,numFiles,'randomize');

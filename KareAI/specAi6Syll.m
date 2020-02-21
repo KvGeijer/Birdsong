@@ -35,33 +35,6 @@ layers = [
     fullyConnectedLayer(size(labelCount, 1))
     softmaxLayer
     classificationLayer];
-%% Layers by Bryno...
-
-layers = [
-    imageInputLayer([imgSize(1) imgSize(2) 1])
-    
-    convolution2dLayer(3,8,'Padding','same')
-    batchNormalizationLayer
-    reluLayer
-    
-    maxPooling2dLayer(2,'Stride',2)
-    
-    convolution2dLayer(3,16,'Padding','same')
-    batchNormalizationLayer
-    reluLayer
-    
-    maxPooling2dLayer(2,'Stride',2)
-    
-    convolution2dLayer(3,32,'Padding','same')
-    batchNormalizationLayer
-    reluLayer
-    
-    fullyConnectedLayer(size(labelCount, 1))
-    softmaxLayer
-    classificationLayer];
-
-
-
 %%
 options = trainingOptions('sgdm', ...
     'InitialLearnRate',0.01, ...

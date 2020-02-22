@@ -9,12 +9,16 @@ imdsTrain.Labels = [imdsTrainA.Labels;imdsTrainB.Labels;imdsTrainC.Labels];
 
 imdsValidation = imageDatastore([imdsValA.Files;imdsValB.Files;imdsValC.Files]);
 imdsValidation.Labels = [imdsValA.Labels;imdsValB.Labels;imdsValC.Labels];
-%%
+
 labelCountTrain = countEachLabel(imdsTrain);
 labelCountValidation = countEachLabel(imdsValidation);
 
+[imdsTrain, ~] = splitEachLabel(imdsTrain, min(labelCountTrain.Count),'randomize');
+labelCountTrain = countEachLabel(imdsTrain);
+
 imgSizeTrain = size(readimage(imdsTrain,1));
 imgSizeValidation = size(readimage(imdsValidation,1));
+
 
 
 %%
@@ -45,7 +49,7 @@ layers = [
 %%
 options = trainingOptions('sgdm', ...
     'InitialLearnRate',0.01, ...
-    'MaxEpochs',50, ...
+    'MaxEpochs',25, ...
     'Shuffle','every-epoch', ...
     'ValidationData',imdsValidation, ...
     'ValidationFrequency',10, ...
@@ -57,6 +61,8 @@ options = trainingOptions('sgdm', ...
 net = trainNetwork(imdsTrain,layers,options);
 
 %% INFOGA DIN METOD F?R GENOMSNITT H?R OSKAR
+
+
 
 %%
 YPred = classify(net,imdsValidation);

@@ -20,28 +20,22 @@ names{2} = ["bofink";"grasparv";"talgoxe"];
 names{3} = ["bergfink";"blames";"bofink";"grasparv";"pilfink";"talgoxe"];
 names{4} = ["bergfink";"blames";"bofink";"grasparv";"pilfink";"talgoxe"];
 
-options = trainingOptions('sgdm', ...
-    'InitialLearnRate',0.01, ...
-    'MaxEpochs',25, ...
-    'Shuffle','every-epoch', ...
-    'ValidationData',imdsValidation, ...
-    'ValidationFrequency',4, ...
-    'Verbose',false, ...
-    'ExecutionEnvironment', 'auto');
 
 
 %First arg: type
 %Second: rep
 %Third: 1:accuracy syllables, 2:accuracy syllable matrix 3:accuracy birds matrix
-results = cell(4,15,3);
+results = cell(4,20,3);
 
 for type = 1:4
-    for rep = 1:15
+    for rep = 1:20
         % Set up imdsValidation and imdsTrain
         amountBirds = length(folders{type});
         
         trainFiles = [];
         trainLabels = [];
+        testFiles = [];
+        testLabels = [];
         
         for k = 1:amountBirds
             [imdsTrainLoop, imdsTestLoop] = imdata(folders{type}{k},names{type}(k));
@@ -63,7 +57,7 @@ for type = 1:4
         numFiles = min(labelCount.Count);
         numTrain = round(numFiles*0.8);
         numVal = numFiles-numTrain;
-        [imdsTrain, imdsValidation] = splitEachLabel(imds,numTrain,numVal,'randomize');
+        [imdsTrain, imdsValidation] = splitEachLabel(imdsTrain,numTrain,numVal,'randomize');
 
         imgSize = size(readimage(imdsTrain,1));
 
@@ -90,13 +84,22 @@ for type = 1:4
             softmaxLayer
             classificationLayer];
         
+        options = trainingOptions('sgdm', ...
+            'InitialLearnRate',0.01, ...
+            'MaxEpochs',25, ...
+            'Shuffle','every-epoch', ...
+            'ValidationData',imdsValidation, ...
+            'ValidationFrequency',4, ...
+            'Verbose',false, ...
+            'ExecutionEnvironment', 'auto');
+        
         net = trainNetwork(imdsTrain,layers,options);
         
         YPred = classify(net,imdsTest);
         YTest = imdsTest.Labels;
         results{type,rep,1} = sum(YPred == YTest)/numel(YTest);
-        results(type,rep,2) = CheckNetSyll(net,imdsTest);
-        results(type,rep,3) = CheckNet(net,imdsTest);
+        results{type,rep,2} = CheckNetSyll(net,imdsTest);
+        results{type,rep,3} = CheckNet(net,imdsTest);
         
         disp("Type: " + type + ", Rep: " + rep + ", Done!")
     end

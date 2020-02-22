@@ -1,29 +1,29 @@
 %%
 folders = {'.\Oskar2\bofink';'.\Oskar2\grasparv';'.\Oskar2\talgoxe'};
-[imdsTrainA, imdsValA] = imdata(folders(1),"bofink");
-[imdsTrainB, imdsValB] = imdata(folders(2),"grasparv");
-[imdsTrainC, imdsValC] = imdata(folders(3),"talgoxe");
+[imdsTrainA, imdsTestA] = imdata(folders(1),"bofink");
+[imdsTrainB, imdsTestB] = imdata(folders(2),"grasparv");
+[imdsTrainC, imdsTestC] = imdata(folders(3),"talgoxe");
 
 imdsTrain = imageDatastore([imdsTrainA.Files;imdsTrainB.Files;imdsTrainC.Files]);
 imdsTrain.Labels = [imdsTrainA.Labels;imdsTrainB.Labels;imdsTrainC.Labels];
 
-imdsValidation = imageDatastore([imdsValA.Files;imdsValB.Files;imdsValC.Files]);
-imdsValidation.Labels = [imdsValA.Labels;imdsValB.Labels;imdsValC.Labels];
+imdsTest = imageDatastore([imdsTestA.Files;imdsTestB.Files;imdsTestC.Files]);
+imdsTest.Labels = [imdsTestA.Labels;imdsTestB.Labels;imdsTestC.Labels];
 
+labelCountTrain = countEachLabel(imdsTrain);
+labelCountTest = countEachLabel(imdsTest);
+
+[imdsTrain, imdsValidation, ~] = splitEachLabel(imdsTrain, round(min(labelCountTrain.Count)*0.8),min(labelCountTrain.Count)-round(min(labelCountTrain.Count)*0.8),'randomize');
 labelCountTrain = countEachLabel(imdsTrain);
 labelCountValidation = countEachLabel(imdsValidation);
 
-[imdsTrain, ~] = splitEachLabel(imdsTrain, min(labelCountTrain.Count),'randomize');
-labelCountTrain = countEachLabel(imdsTrain);
-
-imgSizeTrain = size(readimage(imdsTrain,1));
-imgSizeValidation = size(readimage(imdsValidation,1));
+imgSize = size(readimage(imdsTrain,1));
 
 
 
 %%
 layers = [
-    imageInputLayer([imgSizeTrain(1) imgSizeTrain(2) 1])
+    imageInputLayer([imgSize(1) imgSize(2) 1])
     
     convolution2dLayer(3,8,'Padding','same')
     batchNormalizationLayer

@@ -1,16 +1,16 @@
 %L?ser in inputs.
-folders = {'.\Oskar\bofink';'.\Oskar\grasparv';'.\Oskar\talgoxe'};
+folders = {'.\Oskar50%syll\bofink';'.\Oskar50%syll\grasparv';'.\Oskar50%syll\talgoxe'};
 imds = imageDatastore(folders,'LabelSource','foldernames');
 %%
 labelCount = countEachLabel(imds);
 imgSize = size(readimage(imds,1));
 %%
-numFiles = 207;
-[imdsUse,imdsExtra] = splitEachLabel(imds,numFiles,'randomize');
+numFiles = min(labelCount.Count);
+numTrain = round(numFiles*0.7);
+numVal = round(numFiles*0.15);
+numTest = numFiles -numTrain - numVal;
+[imdsTrain,imdsValidation, imdsTest] = splitEachLabel(imds,numTrain,numVal,numTest,'randomize');
 
-%%
-numTrain = round(0.8*numFiles);
-[imdsTrain,imdsValidation] = splitEachLabel(imdsUse,numTrain,'randomize');
 
 %%
 layers = [
@@ -40,10 +40,10 @@ layers = [
 %%
 options = trainingOptions('sgdm', ...
     'InitialLearnRate',0.01, ...
-    'MaxEpochs',50, ...
+    'MaxEpochs',25, ...
     'Shuffle','every-epoch', ...
     'ValidationData',imdsValidation, ...
-    'ValidationFrequency',10, ...
+    'ValidationFrequency',5, ...
     'Verbose',false, ...
     'Plots','training-progress', ...
     'ExecutionEnvironment', 'auto');
@@ -52,17 +52,10 @@ options = trainingOptions('sgdm', ...
 net = trainNetwork(imdsTrain,layers,options);
 
 %%
-YPred = classify(net,imdsValidation);
-YValidation = imdsValidation.Labels;
+YPred = classify(net,imdsTest);
+YTest = imdsTest.Labels;
 
-results = zeros(size(labelCount, 1), size(labelCount, 1));
-for i = 1:length(YPred)
-    guess = str2num('uint8(' + string(YPred(i)) + ')');
-    actual = str2num('uint8(' + string(YValidation(i)) + ')');
-    results(guess, actual) = results(guess, actual) + 1;
-end
-
-accuracy = sum(YPred == YValidation)/numel(YValidation);
+accuracy = sum(YPred == YTest)/numel(YTest);
 
 %%
 index = randperm(size(imdsValidation.Files, 1),1);

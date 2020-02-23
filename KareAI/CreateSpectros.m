@@ -1,22 +1,30 @@
-%For this to work you need to create the folder Oskar with the birds as
-%subfolders.
-name = ".\Oskar2";
+%Fixes all spectros so long evals can run
+
 faglar = ["bergfink","blames","bofink","grasparv","pilfink","talgoxe"];
 dataPath = '..\Data';
 addpath('..');
 maxLen = 37882;
 
-
+mkdir('.\Oskar50%');
+mkdir('.\Oskar2');
+mkdir('.\Oskar50%syll');
+mkdir('.\Oskar');
 
 for type = 1:6
     %Find all files in subfolders of data
     T = dir(fullfile(dataPath,faglar(type),'*'));
     C = {T(~[T.isdir]).name};
     
+    mkdir(fullfile('.\Oskar50%',faglar(type)));
+    mkdir(fullfile('.\Oskar50%syll',faglar(type)));
+    mkdir(fullfile('.\Oskar',faglar(type)));
+    mkdir(fullfile('.\Oskar2',faglar(type)));
+    
     %for n = 1:1
     for n = 1:numel(C)
         %Create one folder for each bird
-        mkdir(fullfile(name,faglar(type),num2str(n)));
+        mkdir(fullfile('Oskar50%',faglar(type),num2str(n)));
+        mkdir(fullfile('Oskar2',faglar(type),num2str(n)));
         %read file and get syllables
         F = fullfile(dataPath,faglar(type),C{n});
         [data,fs] = audioread(F);
@@ -31,6 +39,20 @@ for type = 1:6
             y(1:numPix) = Xmat(1:numPix,syll);
             
             Ny = length(y);
+            nsc = floor(Ny/(256 - 0.5*(256 - 1)));
+            nov = floor(nsc*(1 - 0.5));
+            nff = max(nextpow2(nsc),256);
+
+            img = abs(spectrogram(y,hamming(nsc),nov,nff));
+            maxVal = max(max(img));
+            minVal = min(min(img));
+            img = (img-minVal)/(maxVal-minVal);
+            
+            imwrite(img, fullfile('Oskar50%',faglar(type),num2str(n), syll + ".png"),'PNG');
+            imwrite(img, fullfile('Oskar50%syll',faglar(type),num2str(n) + "_" + syll + ".png"),'PNG');
+            
+            %Now again for bad rez
+            Ny = length(y);
             nsc = floor(Ny/4.5);
             nov = floor(nsc/2);
             nff = max(256,2^nextpow2(nsc));
@@ -39,10 +61,9 @@ for type = 1:6
             maxVal = max(max(img));
             minVal = min(min(img));
             img = (img-minVal)/(maxVal-minVal);
-            imwrite(img,fullfile(name,faglar(type),num2str(n),syll + ".png"),'PNG');
             
-            
-            
+            imwrite(img,fullfile('Oskar2',faglar(type),num2str(n),syll + ".png"),'PNG');
+            imwrite(img,fullfile('Oskar',faglar(type),num2str(n) + "_" + syll + ".png"),'PNG');
         end
         
     end

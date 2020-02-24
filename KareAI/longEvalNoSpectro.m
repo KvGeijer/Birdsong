@@ -25,7 +25,7 @@ resultsBucket = cell(2,20,2);
 resultsBirds = cell(2,20,3);
 
 %Bucket method
-for type = 3:2
+for type = 1:2
    for rep = 1:20
         imds = imageDatastore(folders{type},'LabelSource','foldernames');
 
@@ -83,7 +83,7 @@ for type = 3:2
         
        disp("Type: " + type + ", Rep: " + rep + ", Done!")
    end
-   save('results\resultsNoSpectroBucket.mat','results');
+   save('results\resultsNoSpectroBucket.mat','resultsBucket');
 end
 
 
@@ -164,6 +164,6 @@ for type = 3:4
         
         disp("Type: " + type + ", Rep: " + rep + ", Done!")
     end
-    save('results\resultsNoSpectroBird.mat','results');
+    save('results\resultsNoSpectroBird.mat','resultsBirds');
 end
 disp('You did it! You crazy son of a &?#%')

@@ -5,4 +5,4 @@ To train the AI on the real bird songs you need to first run the scripts CreateS
 
 More information can be found in our report.
 
-This project was a collaboration between K?re von Geijer, Oskar ?str?m, Emil Sandelin, Maja Gajic.
+This project was a collaboration between Kåre von Geijer, Oskar Åström, Emil Sandelin, Maja Gajić.

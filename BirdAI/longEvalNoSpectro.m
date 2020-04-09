@@ -1,3 +1,5 @@
+% To run this script you need to have run "createSyllables"
+
 % This script should run the following and save their results:
 %   Audio of 3 birds syllables, bucket method
 %   Audio of 6 birds syllables, bucket method

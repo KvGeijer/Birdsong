@@ -1,3 +1,5 @@
+% To run this script you need to have run "createSpectros"
+
 % This script should run the following and save their results:
 %   Spectrogram of 3 birds, bad time rez
 %   Spectrogram of 3 birds, good time rez
@@ -18,7 +20,7 @@ folders{4} = {'.\Oskar50%syll\bergfink';'.\Oskar50%syll\blames';'.\Oskar50%syll\
 %Third: 1:accuracy, 2:accuracy matrix
 results = cell(4,20,2);
 
-for type = 1:4
+for type = 3:4
    for rep = 1:20
         imds = imageDatastore(folders{type},'LabelSource','foldernames');
 
@@ -64,6 +66,7 @@ for type = 1:4
             'ValidationData',imdsValidation, ...
             'ValidationFrequency',5, ...
             'Verbose',false, ...
+            'Plots','training-progress',...
             'ExecutionEnvironment', 'auto' ...
             );
    %         'Plots','training-progress'...

@@ -2,7 +2,7 @@ function [Xmat, Tmat, fs] = strophecut(data0, fs, filtLongLen, tol)
 %This function cuts out syllables (or strophes if you change settings).
 
 %Do you want to plot shit?
-figOn = 0;
+figOn = 1;
 
 %Output: Xmat is a matrix where the columns are the syllables extracted
 %from the input. Tmat is a matrix where the columns store the associated
@@ -74,14 +74,16 @@ if figOn==1
     figure;
     subplot(411);
     plot(t,data);
-    title('Nersamplad Orginaldata');
-    subplot(412);
+    title('Ursprunglig ballad');
+    subplot(413);
     plot(t,data);
     hold on;
     plot(indSign/fs,data(indSign),'.','LineWidth',0.005);
-    title('Signifikant orginaldata');
-    subplot(413);
+    title('Signifikant ljud');
+    subplot(412);
     plot(t,powDataShort-powDataLong);
+    hold on;
+    plot(t,reqDev*ones(length(t),1),'--r');
     title('Differens av filtrerade signaler');
 end
 
@@ -132,7 +134,7 @@ end
 %Remember to trim all the zeros
 if figOn==1
     subplot(414);
-    title('Different cut out strophes');
+    title('Olika utklippta stavelser');
     hold on
     for ii = 1:length(startInd)
        plot(Tmat(1:(stopInd(ii)-startInd(ii)),ii),Xmat(1:(stopInd(ii)-startInd(ii)),ii)); 

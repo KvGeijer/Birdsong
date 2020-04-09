@@ -1,3 +1,5 @@
+% To run this script you need to have run "createSpectros"
+
 % This script should run the following and save their results:
 %   Spectrogram of 3 birds, bad time rez
 %   Spectrogram of 3 birds, good time rez

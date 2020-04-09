@@ -1,14 +1,17 @@
-%Fixes all spectros so long evals can run
+%Creates all spectrograms, zero-pads to get same dimension
 
 faglar = ["bergfink","blames","bofink","grasparv","pilfink","talgoxe"];
 dataPath = '..\Data';
 addpath('..');
 maxLen = 37882;
 
+%For the two different types of spectrograms. The ones with 50% have bad
+%resolution in time while the other ones are better.
 mkdir('.\Oskar50%');
 mkdir('.\Oskar2');
 mkdir('.\Oskar50%syll');
 mkdir('.\Oskar');
+mkdir('.\results');
 
 for type = 1:6
     %Find all files in subfolders of data

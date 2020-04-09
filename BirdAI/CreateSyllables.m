@@ -1,16 +1,13 @@
-%Creates syllables (!and whole ballades), with added zeros so they all fit
-%together
+%Creates syllables, with added zeros so they all have the same dimensions
 
 faglar = ["bergfink","blames","bofink","grasparv","pilfink","talgoxe"];
 dataPath = '..\Data';
 addpath('..');
 maxLenSyll = 37882;
-%maxLenBallad = 7858416;
 
+mkdir('.\results');
 mkdir('.\Syllables');
 mkdir('.\SyllablesSubs');
-%mkdir('.\Ballader');
-
 
 for type = 1:6
     %Find all files in subfolders of data
@@ -19,7 +16,6 @@ for type = 1:6
     
     mkdir(fullfile('.\Syllables',faglar(type)));
     mkdir(fullfile('.\SyllablesSubs',faglar(type)));
-    %mkdir(fullfile('.\Ballader',faglar(type)));
     
     %for n = 1:1
     for n = 1:numel(C)
@@ -43,10 +39,6 @@ for type = 1:6
             imwrite(y, fullfile('Syllables',faglar(type),num2str(n) + "_" + syll + ".png"),'PNG');
             
         end
-        %did not work since they were too large
-        %ballad = [data;zeros(maxLenBallad-length(data),1)];
-        %imwrite(ballad,fullfile('Ballader',faglar(type),num2str(n) + ".png"),'PNG');
-        
     end
     disp(faglar(type) + " done!"); 
     
